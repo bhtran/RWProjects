@@ -29,6 +29,22 @@
 
 // Most objects in this tutorial need an avatar, to make things exciting.
 
+//class family {
+//    var _members: Int = 2
+//    var members: Int {
+//        get {
+//            return _members
+//        }
+//        set (newVal) {
+//            if newVal >= 2 {
+//                _members = newVal
+//            } else {
+//                print("Error: Cannot have family with less than 2 members")
+//            }
+//        }
+//    }
+//}
+
 protocol Avatar {
   var avatar: String { get }
 }
@@ -128,7 +144,6 @@ struct Hat {
   var size: HatSize = .medium
   var isMagical = true
 }
-
 
 protocol Magical: Avatar {
   var name: String? { get set }
