@@ -57,18 +57,16 @@ enum MagicWords: String {
 }
 
 struct Spell {
-
   var magicWords: MagicWords = .abracadbra
-  
+    
   // If words are considered magical, we can create a spell
-  init?(words: String) {
+  init?(words: String) { // Failable Initializer
     guard let incantation = MagicWords(rawValue: words) else {
       return nil
     }
     self.magicWords = incantation
   }
-  
-  init?(magicWords: MagicWords) {
+  init?(magicWords: MagicWords) { // Failable Initializer
     self.magicWords = magicWords
   }
 }
@@ -91,7 +89,6 @@ extension Familiar {
     print(avatar, "* \(noise)s *", separator: " ", terminator: "")
   }
 }
-
 
 struct Cat: Familiar {
   var name: String?
