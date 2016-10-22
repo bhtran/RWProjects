@@ -146,7 +146,15 @@ protocol Magical: Avatar {
   var name: String? { get set }
   var spells: [Spell] { get set }
   
-  func turnFamiliarIntoToad() -> Toad
+  func turnFamiliarIntoToad() throws -> Toad
+}
+
+enum ChangoSpellError: Error {
+    case hatMissingOrNotMagical
+    case noFamiliar
+    case familiarAlreadyAToad
+    case spellFailed(reason: String)
+    case spellNotKnownToWitch
 }
 
 struct Witch: Magical {
@@ -170,23 +178,48 @@ struct Witch: Magical {
     self.hat = hat
   }
   
-    func turnFamiliarIntoToad() -> Toad {
-        if let hat = hat {
-            if hat.isMagical { // When have you ever seen a Witch perform a spell without her magical hat on ? :]
-                if let familiar = familiar {   // Check if witch has a familiar
-                    if let toad = familiar as? Toad {  // If familiar is already a toad, no magic required
-                        return toad
-                    } else {
-                        if hasSpell(ofType: .prestoChango) {
-                            if let name = familiar.name {
-                                return Toad(name: name)
-                            }
-                        }
-                    }
-                }
-            }
+    func turnFamiliarIntoToad() throws -> Toad {
+        
+        guard let hat = hat, hat.isMagical else {
+            throw ChangoSpellError.hatMissingOrNotMagical
         }
-        return Toad(name: "New Toad")  // This is an entirely new Toad.
+        
+        guard let familiar = familiar else {
+            throw ChangoSpellError.noFamiliar
+        }
+        
+        if familiar is Toad {
+            throw ChangoSpellError.familiarAlreadyAToad
+        }
+        
+        guard hasSpell(ofType: .prestoChango) else {
+            throw ChangoSpellError.spellNotKnownToWitch
+        }
+        
+        guard let name = familiar.name else {
+            let reason = "Familiar does have a name."
+            throw ChangoSpellError.spellFailed(reason: reason)
+        }
+        return Toad(name: name)
+
+// Pyramid of Doom is the nesting of if else statements. 
+// Guard avoids this by making the early exit and making the code cleaner looking
+//        if let hat = hat {
+//            if hat.isMagical { // When have you ever seen a Witch perform a spell without her magical hat on ? :]
+//                if let familiar = familiar {   // Check if witch has a familiar
+//                    if let toad = familiar as? Toad {  // If familiar is already a toad, no magic required
+//                        return toad
+//                    } else {
+//                        if hasSpell(ofType: .prestoChango) {
+//                            if let name = familiar.name {
+//                                return Toad(name: name)
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//        return Toad(name: "New Toad")  // This is an entirely new Toad.
     }
   
   func hasSpell(ofType type: MagicWords) -> Bool { // Check if witch currently has an appropriate spell in their spellbook
